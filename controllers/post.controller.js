@@ -98,7 +98,7 @@ export const featurePost = async (req, res) => {
     if (!clerkUserId) {
         res.status(401).json("Not Authenticated User")
     }
-    const role = req.auth()?.sessionClaims?.metadata?.role || "user"
+    const role = req.auth().sessionClaims?.metadata?.role || "user"
     if (role !== "admin") {
         return res.status(403).json("You can feature this story!")
     }
