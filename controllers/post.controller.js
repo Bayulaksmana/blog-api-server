@@ -1,6 +1,7 @@
 import ImageKit from "imagekit";
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
+// import slugify from "slugify";
 
 
 export const getPosts = async (req, res) => {
@@ -62,6 +63,16 @@ export const getPost = async (req, res) => {
     const post = await Post.findOne({ slug: req.params.slug }).populate("user", "username image email");
     res.status(200).json(post)
 }
+export const getPostById = async (req, res) => {
+    try {
+        const post = await Post.findById({ _id: req.params.id }).populate("user", "username image email");
+        if (!post) return res.status(404).json({ message: "Post not found" });
+        res.status(200).json(post);
+    } catch (err) {
+        res.status(500).json({ message: "Failed to get post by ID", error: err.message });
+    }
+};
+
 export const createPost = async (req, res) => {
     const clerkUserId = req.auth().userId;
     const user = await User.findOne({ clerkUserId })
@@ -91,6 +102,55 @@ export const deletePost = async (req, res) => {
     })
     res.status(200).json("Post Has Been Deleted!!!", deletedPost)
 }
+export const updatePost = async (req, res) => {
+    try {
+        const clerkUserId = req.auth().userId;
+        const role = req.auth().sessionClaims?.metadata?.role || "user";
+        // Jika admin, izinkan update tanpa batasan user
+        if (role === "admin") {
+            const updatedPost = await Post.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set: {
+                        title: req.body.title,
+                        category: req.body.category,
+                        desc: req.body.desc,
+                        img: req.body.img,
+                        content: req.body.content,
+                        // slug: slugify(req.body.title, { lower: true }),
+                    },
+                },
+                { new: true }
+            );
+            if (!updatedPost) return res.status(404).json({ message: "Post not found" });
+            return res.status(200).json(updatedPost);
+        }
+        // Jika user biasa, hanya izinkan update milik sendiri
+        const user = await User.findOne({ clerkUserId });
+        if (!user) return res.status(401).json({ message: "Unauthorized" });
+        const updatedPost = await Post.findOneAndUpdate(
+            { _id: req.params.id, user: user._id },
+            {
+                $set: {
+                    title: req.body.title,
+                    category: req.body.category,
+                    desc: req.body.desc,
+                    img: req.body.img,
+                    content: req.body.content,
+                    // slug: slugify(req.body.title, { lower: true }),
+                },
+            },
+            { new: true }
+        );
+
+        if (!updatedPost) return res.status(404).json({ message: "Post not found or not yours" });
+
+        return res.status(200).json(updatedPost);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: err.message });
+    }
+};
 
 export const featurePost = async (req, res) => {
     const clerkUserId = req.auth().userId;

@@ -26,7 +26,6 @@ export const addComment = async (req, res) => {
         res.status(201).json(savedComment)
     }, 3000)
 }
-
 export const deleteComment = async (req, res) => {
     const clerkUserId = req.auth().userId
     const id = req.params.id
