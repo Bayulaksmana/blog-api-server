@@ -16,6 +16,15 @@ export const createDaerah = async (req, res) => {
     res.status(200).json("Carousel has been add.." && post)
 }
 
+export const deleteDaerah = async (req, res) => {
+    const clerkUserId = req.auth().userId;
+    const user = await userModel.findOne({ clerkUserId })
+    const deletedPost = await Daerah.findOneAndDelete({
+        _id: req.params.id,
+        user: user._id
+    })
+    res.status(200).json("Dstrict Has Been Deleted!!!", deletedPost)
+}
 const imagekit = new ImageKit({
     urlEndpoint: process.env.IK_URL_ENDPOINT,
     publicKey: process.env.IMAGEKIT_PUBLIC_KEY,

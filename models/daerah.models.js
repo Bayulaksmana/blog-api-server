@@ -22,6 +22,10 @@ const daerahSchema = new Schema(
         description: {
             type: String,
         },
+        website: {
+            type: String,
+            required: true,
+        },
     },
     { timestamps: true }
 );

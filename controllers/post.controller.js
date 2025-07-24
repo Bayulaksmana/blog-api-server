@@ -1,7 +1,6 @@
 import ImageKit from "imagekit";
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
-// import slugify from "slugify";
 
 
 export const getPosts = async (req, res) => {
@@ -117,7 +116,6 @@ export const updatePost = async (req, res) => {
                         desc: req.body.desc,
                         img: req.body.img,
                         content: req.body.content,
-                        // slug: slugify(req.body.title, { lower: true }),
                     },
                 },
                 { new: true }
@@ -137,7 +135,6 @@ export const updatePost = async (req, res) => {
                     desc: req.body.desc,
                     img: req.body.img,
                     content: req.body.content,
-                    // slug: slugify(req.body.title, { lower: true }),
                 },
             },
             { new: true }
