@@ -1,6 +1,6 @@
 export const getKotaApi = async (req, res) => {
     try {
-        const response = await fetch("https://id.wikipedia.org/api/rest_v1/page/summary/Kota_Kotamobagu");
+        const response = await fetch("https://api-pddikti.ridwaanhall.com/search/mhs/10111650%20unikom");
 
         if (!response.ok) {
             return res.status(response.status).json({ error: "Failed to fetch data from API" });
