@@ -2,38 +2,10 @@ import Kampus from "../models/kampus.model.js";
 import universitasModel from "../models/universitas.model.js";
 
 export const getUniversitas = async (req, res) => {
-    try {
-        const keyword = "ithb"
-        const response = await fetch(`https://api-pddikti.ridwaanhall.com/search/pt/${encodeURIComponent(keyword)}`);
-        if (!response.ok) {
-            return res.status(response.status).json({ error: "Failed to fetch data from API" });
-        }
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-            return res.status(500).json({ error: "Invalid content-type response" });
-        }
-        const data = await response.json();
-        const kampusArray = data;
-
-        if (!Array.isArray(kampusArray)) {
-            return res.status(500).json({ error: "Data dari API tidak sesuai format array." });
-        }
-
-        const cleanData = kampusArray.map((item) => ({
-            id_pt: item.id,
-            kode: item.kode,
-            nama: item.nama,
-            nama_singkat: item.nama_singkat || "", // bisa default ""
-        }));
-
-        console.log("Simpan data pertama:", cleanData[0]);
-
-        const savedData = await Kampus.insertMany(cleanData); // sesuaikan dengan struktur respons
-        return res.status(200).json(data);
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        return res.status(500).json({ error: "Internal Server Error" });
-    }
+    const query = {}
+    const kampus = await Kampus.find(query)
+    console.log(kampus)
+    res.status(200).json(kampus)
 };
 
 export const getUniversitasId = async (req, res) => {
@@ -42,10 +14,12 @@ export const getUniversitasId = async (req, res) => {
         if (!kampusList || kampusList.length === 0) {
             return res.status(404).json({ error: "Tidak ada kampus ditemukan" });
         }
+        console.log(kampusList)
+        const keyword = "dX1scaoJDscY9D4TcMnO6qrj2bpNTyBlnrkW_ik3XvJXLUUIedfNHTMZxfYVOudCdgpK1A=="
         const detailList = await Promise.all(
             kampusList.map(async (kampus) => {
                 try {
-                    const response = await fetch(`https://api-pddikti.ridwaanhall.com/pt/detail/${encodeURIComponent(kampus.id_pt)}`);
+                    const response = await fetch(`https://api-pddikti.ridwaanhall.com/pt/detail/${encodeURIComponent(keyword)}`);
                     if (!response.ok) return null;
                     const contentType = response.headers.get("content-type");
                     if (!contentType || !contentType.includes("application/json")) return null;
@@ -55,6 +29,7 @@ export const getUniversitasId = async (req, res) => {
                         return null;
                     }
                     const kampusDataArray = Array.isArray(data) ? data : [data];
+                    // const kampusDataArray = data;
                     const cleanData = kampusDataArray.map((item) => ({
                         id_pt: item.id_pt,
                         kelompok: item.kelompok,
@@ -81,7 +56,7 @@ export const getUniversitasId = async (req, res) => {
                         akreditasi_pt: item.akreditasi_pt,
                         status_akreditasi: item.status_akreditasi
                     }));
-                    await universitasModel.insertMany(cleanData, { ordered: false });
+                    const savedData = await universitasModel.insertMany(cleanData, { ordered: false });
                     return cleanData;
                 } catch (err) {
                     console.error(`Gagal fetch kampus ${kampus.nama}:`, err.message);

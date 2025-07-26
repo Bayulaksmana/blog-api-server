@@ -37,6 +37,9 @@ const universitasSchema = new Schema(
             type: String,
             required: true
         },
+        img:{
+            type: String
+        },
         alamat: {
             type: String
         },
