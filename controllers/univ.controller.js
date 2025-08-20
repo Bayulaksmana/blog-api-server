@@ -5,10 +5,7 @@ export const getUniversitas = async (req, res) => {
     const data = await Kampus.find()
     return res.status(200).json(data)
 }
-
 export const getUniversitasId = async (req, res) => {
-    // const data = await Universitas.find()
-    // return res.status(200).json(data)
     try {
         const rawData = await Universitas.find({
             website: { $exists: true, $ne: "" },
@@ -22,10 +19,8 @@ export const getUniversitasId = async (req, res) => {
                 uniqueMap.set(item.nm_singkat, item);
             }
         }
-
         // Ambil hasil unik
         const uniqueData = Array.from(uniqueMap.values());
-
         // Acak hasil
         const shuffled = uniqueData.sort(() => Math.random() - 0.5);
         return res.status(200).json(shuffled);

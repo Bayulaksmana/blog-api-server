@@ -10,6 +10,7 @@ import univRouter from "./routes/univ.route.js"
 import upRouter from "./routes/signup.route.js"
 import inRouter from "./routes/signin.route.js"
 import googleRoute from './routes/google.route.js'
+// import mahasiswaRouter from './routes/mahasiswa.route.js'
 // import cors from "cors"
 
 
@@ -38,7 +39,7 @@ server.use("/signup", upRouter)
 server.use("/signin", inRouter)
 
 
-
+// server.use("/mahasiswa", mahasiswaRouter)
 server.use("/users", userRouter);
 server.use("/posts", postRouter);
 server.use("/comments", commentRouter);
@@ -57,6 +58,6 @@ server.use((error, req, res, next) => {
 });
 
 server.listen(3000, () => {
-    connectDB();
     console.log("✅ Server is Up");
+    connectDB();
 })

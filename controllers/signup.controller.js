@@ -1,6 +1,5 @@
 import bcrypt from "bcrypt"
 import userProfile from "../models/user.js";
-import { nanoid } from "nanoid"
 import jwt from "jsonwebtoken"
 
 
